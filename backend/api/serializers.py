@@ -29,6 +29,25 @@ class Author_Serializer(serializers.ModelSerializer):
             return False
         return obj.subscribers.filter(id=request.user.id).exists()
 
+class Subscriber_Serializer(Author_Serializer):
+    recipes = serializers.SerializerMethodField(method_name="get_recipes")
+    recipes_count = serializers.IntegerField(source="recipes.count")
+
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "id", "email", "username", "first_name", "last_name",
+            "recipes", "recipes_count"
+        )
+
+    def get_recipes(self, obj):
+        request = self.context.get("request")
+        recipes_limit = request.query_params.get("recipes_limit")
+        recipes = obj.recipes.all()[:int(recipes_limit)] if recipes_limit else obj.recipes.all()
+        return Short_Recipe_Serializer(
+            recipes, context={"request": request}, many=True
+        ).data
+
 class Recipe_Serializer(serializers.ModelSerializer):
     author = Author_Serializer(read_only=True)
     ingredients = Ingredient_Serializer(many=True)
