@@ -18,7 +18,8 @@ class Ingredient(models.Model):
         verbose_name_plural = "Ингредиенты"
         constraints = [
             models.UniqueConstraint(
-                fields=["name", "measurement_unit"]
+                fields=["name", "measurement_unit"],
+                name="unique_ingredient"
             )
         ]
 
@@ -36,6 +37,7 @@ class Recipe(models.Model):
         Ingredient,
         through="Ingredient_In_Recipe",
         verbose_name="Ингредиенты",
+        related_name="recipes"
     )
     name = models.CharField(
         max_length=256,
@@ -72,13 +74,13 @@ class Ingredient_In_Recipe(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="ingredients",
+        related_name="recipe_ingredients",
         verbose_name="Рецепт",
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name="recipies",
+        related_name="ingredient_recipes",
         verbose_name="Ингредиент",
     )
     amount = models.IntegerField(
@@ -93,7 +95,8 @@ class Ingredient_In_Recipe(models.Model):
         verbose_name_plural = "Ингредиенты в рецептах"
         constraints = [
             models.UniqueConstraint(
-                fields=("recipe", "ingredient")
+                fields=("recipe", "ingredient"),
+                name="unique_ingredient_in_recipe"
             )
         ]
 
@@ -117,7 +120,8 @@ class Recipe_collection_mixin(models.Model):
         abstract = True
         constraints = [
             models.UniqueConstraint(
-                fields=("user", "recipe")
+                fields=("user", "recipe"),
+                name="%(app_label)s_%(class)s_unique_user_recipe"
             )
         ]
 
