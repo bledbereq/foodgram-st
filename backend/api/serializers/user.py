@@ -3,12 +3,14 @@ from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from .recipe import Short_Recipe_Serializer
 
+User = get_user_model()
+
 class Author_Serializer(serializers.ModelSerializer):
     avatar = Base64ImageField()
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = ("id", "email", "username", "first_name", "last_name", "avatar", "is_subscribed")
 
     def get_is_subscribed(self, obj):
@@ -17,24 +19,22 @@ class Author_Serializer(serializers.ModelSerializer):
             return False
         return obj.subscribers.filter(id=request.user.id).exists()
 
-class Create_User(serializers.ModelSerializer):
-    avatar = Base64ImageField()
+class UserSerializer(serializers.ModelSerializer):
+    avatar = Base64ImageField(required=False)
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
 
     class Meta:
-        model = get_user_model()
-        fields = (
-            "email",
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "password",
-        )
-        extra_kwargs = {"password": {"write_only": True}}
+        model = User
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password', 'avatar')
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'email': {'required': True}
+        }
 
     def create(self, validated_data):
-        password = validated_data.pop("password")
-        user = get_user_model().objects.create(**validated_data)
+        password = validated_data.pop('password')
+        user = User(**validated_data)
         user.set_password(password)
         user.save()
         return user
@@ -43,7 +43,7 @@ class Avatar_Serializer(serializers.ModelSerializer):
     avatar = Base64ImageField()
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = ("avatar",)
 
 class Subscriber_Serializer(Author_Serializer):
@@ -51,7 +51,7 @@ class Subscriber_Serializer(Author_Serializer):
     recipes_count = serializers.IntegerField(source="recipes.count")
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = (
             "id", "email", "username", "first_name", "last_name",
             "recipes", "recipes_count"
