@@ -30,6 +30,35 @@ class Author_Serializer(serializers.ModelSerializer):
             return False
         return obj.subscribers.filter(id=request.user.id).exists()
 
+class Create_User(serializers.ModelSerializer):
+    avatar = Base64ImageField()
+
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "email",
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "password",
+        )
+        extra_kwargs = {"password": {"write_only": True}}
+
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        user = get_user_model().objects.create(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+class Avatar_Serializer(serializers.ModelSerializer):
+    avatar = Base64ImageField()
+
+    class Meta:
+        model = get_user_model()
+        fields = ("avatar",)
+
 class Subscriber_Serializer(Author_Serializer):
     recipes = serializers.SerializerMethodField(method_name="get_recipes")
     recipes_count = serializers.IntegerField(source="recipes.count")
@@ -55,7 +84,7 @@ class Subscription_Serializer(serializers.ModelSerializer):
         fields = (
             "subscribing_user", "target"
         )
-        
+
 class Recipe_Serializer(serializers.ModelSerializer):
     author = Author_Serializer(read_only=True)
     ingredients = Ingredient_Serializer(many=True)
