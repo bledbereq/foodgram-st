@@ -3,6 +3,7 @@ from recipe.models import Ingredient, Ingredient_In_Recipe
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from recipe.models import Recipe
+from auth.models import Subscribe
 
 class Ingredient_Serializer(serializers.ModelSerializer):
     class Meta:
@@ -48,6 +49,13 @@ class Subscriber_Serializer(Author_Serializer):
             recipes, context={"request": request}, many=True
         ).data
 
+class Subscription_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscribe
+        fields = (
+            "subscribing_user", "target"
+        )
+        
 class Recipe_Serializer(serializers.ModelSerializer):
     author = Author_Serializer(read_only=True)
     ingredients = Ingredient_Serializer(many=True)
