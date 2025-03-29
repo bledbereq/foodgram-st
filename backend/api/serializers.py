@@ -27,3 +27,35 @@ class Author_Serializer(serializers.ModelSerializer):
         if not request or not request.user.is_authenticated:
             return False
         return obj.subscribers.filter(id=request.user.id).exists()
+
+class Recipe_Serializer(serializers.ModelSerializer):
+    author = Author_Serializer(read_only=True)
+    ingredients = Ingredient_Serializer(many=True)
+    is_favorited = serializers.SerializerMethodField()
+    is_in_cart = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Recipe
+        fields = (
+            "id",
+            "author",
+            "ingredients",
+            "is_favorited",
+            "is_in_cart",
+            "name",
+            "image",
+            "text",
+            "cook_time",
+        )
+
+    def get_is_favorited(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+        return request.user.favorites.filter(pk=obj.id).exists()
+
+    def get_is_in_shopping_cart(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+        return request.user.in_cart.filter(pk=obj.id).exists()
