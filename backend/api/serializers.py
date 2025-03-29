@@ -59,3 +59,27 @@ class Recipe_Serializer(serializers.ModelSerializer):
         if not request or not request.user.is_authenticated:
             return False
         return request.user.in_cart.filter(pk=obj.id).exists()
+
+    def create_ingredients(self, ingredient_list, recipe):
+        Ingredient_In_Recipe.objects.bulk_create(
+            Ingredient_In_Recipe(
+                ingredient_id=i.get("id"),
+                recipe=recipe,
+                amount=i.get("amount")
+            )
+            for i in ingredient_list
+        )
+
+    def create(self, validated_data):
+        ingredients = validated_data.pop("ingredients")
+        recipe = Recipe.objects.create(
+            **validated_data,
+            author=self.context.get("request").user
+        )
+        self.create_ingredients(ingredients, recipe)
+        return recipe
+
+    def update(self, instance, validated_data):
+        Ingredient_In_Recipe.objects.filter(recipe=instance.id).delete()
+        self.create_ingredients(validated_data.pop("ingredients"), instance)
+        return super().update(instance, validated_data)
