@@ -2,6 +2,7 @@ from rest_framework import serializers
 from recipe.models import Ingredient, Ingredient_In_Recipe
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
+from recipe.models import Recipe
 
 class Ingredient_Serializer(serializers.ModelSerializer):
     class Meta:
@@ -45,7 +46,7 @@ class Recipe_Serializer(serializers.ModelSerializer):
             "name",
             "image",
             "text",
-            "cook_time",
+            "cooking_time",
         )
 
     def get_is_favorited(self, obj):
@@ -83,3 +84,15 @@ class Recipe_Serializer(serializers.ModelSerializer):
         Ingredient_In_Recipe.objects.filter(recipe=instance.id).delete()
         self.create_ingredients(validated_data.pop("ingredients"), instance)
         return super().update(instance, validated_data)
+
+class Short_Recipe_Serializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+
+    class Meta:
+        model = Recipe
+        fields = (
+            "id",
+            "name",
+            "image",
+            "cooking_time",
+        )
