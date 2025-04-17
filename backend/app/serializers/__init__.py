@@ -9,3 +9,7 @@ from .recipes import (
     ShortRecipeSerializer,
 )
 
+from .ingredients import (
+    IngredientSerializer,
+    IngredientInRecipeSerializer,
+)
