@@ -3,3 +3,9 @@ from .users import (
     SubscribedUserSerializer,
     SubscriptionSerializer,
 )
+
+from .recipes import (
+    RecipeSerializer,
+    ShortRecipeSerializer,
+)
+
