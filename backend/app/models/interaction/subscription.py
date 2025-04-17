@@ -1,0 +1,43 @@
+from django.db import models
+from ..user.user import User
+
+
+class Subscription(models.Model):
+    """
+    Модель подписок пользователей на авторов рецептов.
+    
+    Позволяет пользователям подписываться на других пользователей,
+    чтобы следить за их новыми рецептами.
+    
+    Attributes:
+        user (ForeignKey): Пользователь, который подписывается
+        author (ForeignKey): Автор рецептов, на которого подписываются
+    """
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='users',
+        verbose_name='Пользователь',
+        help_text='Пользователь, который подписывается'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='authors',
+        verbose_name='Автор рецептов',
+        help_text='Автор рецептов, на которого подписываются'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_subscription'
+            )
+        ]
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+
+    def __str__(self):
+        return f'{self.user} подписан на {self.author}'
