@@ -3,19 +3,30 @@ from ..user.user import User
 
 
 class Subscription(models.Model):
-    """Модель подписок"""
+    """
+    Модель подписок пользователей на авторов рецептов.
+    
+    Позволяет пользователям подписываться на других пользователей,
+    чтобы следить за их новыми рецептами.
+    
+    Attributes:
+        user (ForeignKey): Пользователь, который подписывается
+        author (ForeignKey): Автор рецептов, на которого подписываются
+    """
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='users',
-        verbose_name='Пользователь'
+        verbose_name='Пользователь',
+        help_text='Пользователь, который подписывается'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='authors',
-        verbose_name='Автор рецептов'
+        verbose_name='Автор рецептов',
+        help_text='Автор рецептов, на которого подписываются'
     )
 
     class Meta:

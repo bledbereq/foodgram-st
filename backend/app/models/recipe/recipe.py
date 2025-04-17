@@ -5,35 +5,56 @@ from .ingredient import Ingredient
 
 
 class Recipe(models.Model):
-    """Модель рецептов"""
+    """
+    Модель рецептов кулинарных блюд.
+    
+    Содержит основную информацию о рецепте, включая название, описание,
+    список ингредиентов, изображение, автора и время приготовления.
+    
+    Attributes:
+        name (CharField): Название рецепта
+        text (TextField): Подробное описание процесса приготовления
+        ingredients (ManyToManyField): Связь с ингредиентами через промежуточную модель
+        image (ImageField): Изображение готового блюда
+        author (ForeignKey): Создатель рецепта
+        cooking_time (IntegerField): Время приготовления в минутах
+        created_at (DateTimeField): Дата и время создания рецепта
+    """
 
     name = models.CharField(
         verbose_name='Название',
-        max_length=256
+        max_length=256,
+        help_text='Название рецепта'
     )
 
     text = models.TextField(
-        verbose_name='Описание'
+        verbose_name='Описание',
+        help_text='Подробное описание процесса приготовления'
     )
 
     ingredients = models.ManyToManyField(
         Ingredient,
         through='IngredientInRecipe',
+        verbose_name='Ингредиенты',
+        help_text='Список необходимых ингредиентов'
     )
 
     image = models.ImageField(
         verbose_name='Картинка',
-        upload_to='recipes/images/'
+        upload_to='recipes/images/',
+        help_text='Изображение готового блюда'
     )
 
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Автор'
+        verbose_name='Автор',
+        help_text='Создатель рецепта'
     )
 
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления (в минутах)',
+        help_text='Время, необходимое для приготовления блюда',
         validators=[
             MinValueValidator(
                 1, 'Время приготовления не может быть менее 1 минуты'
@@ -43,7 +64,8 @@ class Recipe(models.Model):
 
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Дата создания'
+        verbose_name='Дата создания',
+        help_text='Дата и время публикации рецепта'
     )
 
     class Meta:
@@ -57,22 +79,34 @@ class Recipe(models.Model):
 
 
 class IngredientInRecipe(models.Model):
-    """Промежуточная модель для связи рецептов с ингредиентами"""
+    """
+    Промежуточная модель для связи рецептов с ингредиентами.
+    
+    Содержит информацию о количестве каждого ингредиента в рецепте.
+    
+    Attributes:
+        recipe (ForeignKey): Связанный рецепт
+        ingredient (ForeignKey): Используемый ингредиент
+        amount (IntegerField): Количество ингредиента
+    """
 
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        verbose_name='Рецепт'
+        verbose_name='Рецепт',
+        help_text='Рецепт, в котором используется ингредиент'
     )
 
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        verbose_name='Ингредиент'
+        verbose_name='Ингредиент',
+        help_text='Используемый ингредиент'
     )
 
     amount = models.IntegerField(
         verbose_name='Количество',
+        help_text='Количество ингредиента в рецепте',
         validators=[MinValueValidator(
             1,
             'Количество ингредиента должно быть больше нуля!'

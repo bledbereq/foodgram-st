@@ -4,18 +4,29 @@ from ..recipe.recipe import Recipe
 
 
 class UserOfRecipeBase(models.Model):
-    """Базовый класс для Favorite и ShoppingCart"""
+    """
+    Базовый абстрактный класс для моделей взаимодействия пользователей с рецептами.
+    
+    Содержит общие поля и функциональность для моделей Favorite и ShoppingCart.
+    
+    Attributes:
+        user (ForeignKey): Пользователь, взаимодействующий с рецептом
+        recipe (ForeignKey): Рецепт, с которым взаимодействует пользователь
+    """
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Пользователь',
-        related_name='%(class)ss'
+        related_name='%(class)ss',
+        help_text='Пользователь, взаимодействующий с рецептом'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
-        related_name='%(class)ss'
+        related_name='%(class)ss',
+        help_text='Рецепт, с которым взаимодействует пользователь'
     )
 
     class Meta:
@@ -32,7 +43,12 @@ class UserOfRecipeBase(models.Model):
 
 
 class Favorite(UserOfRecipeBase):
-    """Модель избранных рецептов"""
+    """
+    Модель избранных рецептов пользователя.
+    
+    Позволяет пользователям сохранять понравившиеся рецепты
+    для быстрого доступа к ним в будущем.
+    """
 
     class Meta:
         verbose_name = 'Избранное'
@@ -40,7 +56,12 @@ class Favorite(UserOfRecipeBase):
 
 
 class ShoppingCart(UserOfRecipeBase):
-    """Модель корзины покупок"""
+    """
+    Модель корзины покупок пользователя.
+    
+    Позволяет пользователям сохранять рецепты,
+    ингредиенты которых они планируют купить.
+    """
 
     class Meta:
         verbose_name = 'Корзина покупок'
