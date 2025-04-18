@@ -39,6 +39,13 @@ class RecipeSerializer(serializers.ModelSerializer):
             'is_in_shopping_cart',
         )
 
+    def validate_ingredients(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "Список ингредиентов не может быть пустым"
+            )
+        return value
+
     def get_author(self, obj):
         from .users import UserSerializer
         return UserSerializer(obj.author, context=self.context).data
@@ -79,4 +86,22 @@ class RecipeSerializer(serializers.ModelSerializer):
         return self._check_existence(Favorite, recipe)
 
     def get_is_in_shopping_cart(self, recipe):
-        return self._check_existence(ShoppingCart, recipe) 
+        return self._check_existence(ShoppingCart, recipe)
+
+
+class RecipeShortLinkSerializer(serializers.ModelSerializer):
+    """Сериализатор для получения короткой ссылки на рецепт"""
+    
+    short_link = serializers.SerializerMethodField(method_name='get_short_link')
+
+    class Meta:
+        model = Recipe
+        fields = ('short_link',)
+
+    def get_short_link(self, obj):
+        request = self.context.get('request')
+        return request.build_absolute_uri(f'/recipes/{obj.id}/')
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return {'short-link': data['short_link']} 

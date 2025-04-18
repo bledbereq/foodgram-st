@@ -8,6 +8,7 @@ from .users import (
 from .recipes import (
     RecipeSerializer,
     ShortRecipeSerializer,
+    RecipeShortLinkSerializer
 )
 
 from .ingredients import (
@@ -22,6 +23,7 @@ __all__ = [
     'SubscriptionSerializer',
     'RecipeSerializer',
     'ShortRecipeSerializer',
+    'RecipeShortLinkSerializer',
     'IngredientSerializer',
     'IngredientInRecipeSerializer',
 ]

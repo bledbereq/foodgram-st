@@ -13,6 +13,7 @@ from ..core.permissions import IsAuthorOrReadOnly
 from ..serializers import (
     RecipeSerializer,
     ShortRecipeSerializer,
+    RecipeShortLinkSerializer
 )
 
 
@@ -149,4 +150,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 f'{number_of_product}. {recipe_name} (автор: {author})'
             )
 
-        return '\n'.join(report_lines) 
+        return '\n'.join(report_lines)
+
+    @action(detail=True, methods=['get'])
+    def get_link(self, request, pk=None):
+        """Получение короткой ссылки на рецепт"""
+        recipe = self.get_object()
+        serializer = RecipeShortLinkSerializer(
+            recipe,
+            context={'request': request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK) 
