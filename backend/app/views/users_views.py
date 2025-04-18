@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, NotAuthenticated
 
 from ..models import Subscription, User
 from ..core.pagination import PagesPagination
@@ -35,6 +35,8 @@ class UserViewSet(DjoserUserViewSet):
     )
     def get_me(self, request):
         """Метод для получения текущего пользователя"""
+        if not request.user.is_authenticated:
+            raise NotAuthenticated()
         return Response(self.get_serializer(request.user).data)
 
     @action(detail=False, methods=['put', 'delete'], url_path='me/avatar')
