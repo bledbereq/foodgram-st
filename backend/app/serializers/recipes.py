@@ -44,6 +44,14 @@ class RecipeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Список ингредиентов не может быть пустым"
             )
+        
+        # Проверка на повторяющиеся ингредиенты
+        ingredient_ids = [item['ingredient']['id'] for item in value]
+        if len(ingredient_ids) != len(set(ingredient_ids)):
+            raise serializers.ValidationError(
+                "Ингредиенты в рецепте не должны повторяться"
+            )
+        
         return value
 
     def get_author(self, obj):
