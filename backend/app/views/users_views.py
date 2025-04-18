@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, NotAuthenticated
 
 from ..models import Subscription, User
 from ..core.pagination import PagesPagination
@@ -35,6 +35,8 @@ class UserViewSet(DjoserUserViewSet):
     )
     def get_me(self, request):
         """Метод для получения текущего пользователя"""
+        if not request.user.is_authenticated:
+            raise NotAuthenticated()
         return Response(self.get_serializer(request.user).data)
 
     @action(detail=False, methods=['put', 'delete'], url_path='me/avatar')
@@ -42,6 +44,10 @@ class UserViewSet(DjoserUserViewSet):
         """Метод для смены или удаления аватара пользователя"""
         user = request.user
         if request.method == 'PUT':
+            if 'avatar' not in request.data:
+                raise ValidationError(
+                    {'avatar': ['Это поле обязательно.']}
+                )
             serializer = self.get_serializer(
                 user, data=request.data,
                 partial=True
@@ -82,20 +88,25 @@ class UserViewSet(DjoserUserViewSet):
                 raise ValidationError({'errors': 'Подписка уже была оформлена'})
 
             return Response(
-                SubscriptionSerializer(Subscription.objects.get(
-                    user=request.user,
-                    author=author
-                )).data,
+                SubscribedUserSerializer(
+                    author,
+                    context={'request': request}
+                ).data,
                 status=status.HTTP_201_CREATED
             )
 
-        get_object_or_404(
-            Subscription,
-            user=request.user,
-            author=author
-        ).delete()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            subscription = Subscription.objects.get(
+                user=request.user,
+                author=author
+            )
+            subscription.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Subscription.DoesNotExist:
+            raise ValidationError(
+                {'error': 'Подписка не найдена'},
+                code=status.HTTP_400_BAD_REQUEST
+            )
 
     @action(detail=False, methods=['get'], url_path='subscriptions')
     def subscriptions(self, request):

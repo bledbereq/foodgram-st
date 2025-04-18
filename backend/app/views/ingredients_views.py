@@ -15,5 +15,5 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
         """Метод для получения ингредиентов по имени"""
         name = self.request.query_params.get('name')
         if name:
-            return self.queryset.filter(name__istartswith=name.lower())
+            return self.queryset.filter(name__startswith=name)
         return self.queryset 

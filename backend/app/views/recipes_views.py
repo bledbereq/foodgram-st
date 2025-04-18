@@ -13,6 +13,7 @@ from ..core.permissions import IsAuthorOrReadOnly
 from ..serializers import (
     RecipeSerializer,
     ShortRecipeSerializer,
+    RecipeShortLinkSerializer
 )
 
 
@@ -61,13 +62,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_201_CREATED
             )
 
-        get_object_or_404(
-            model,
-            user=request.user,
-            recipe=recipe
-        ).delete()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            instance = model.objects.get(
+                user=request.user,
+                recipe=recipe
+            )
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except model.DoesNotExist:
+            raise ValidationError(
+                {'errors': 'Рецепт не найден в списке'},
+                code=status.HTTP_400_BAD_REQUEST
+            )
 
     @action(detail=True, methods=['post', 'delete'], url_path='favorite')
     def change_favorited_recipes(self, request, pk=None):
@@ -149,4 +155,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 f'{number_of_product}. {recipe_name} (автор: {author})'
             )
 
-        return '\n'.join(report_lines) 
+        return '\n'.join(report_lines)
+
+    @action(detail=True, methods=['get'], url_path='get-link')
+    def get_link(self, request, pk=None):
+        """Получение короткой ссылки на рецепт"""
+        recipe = self.get_object()
+        serializer = RecipeShortLinkSerializer(
+            recipe,
+            context={'request': request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK) 

@@ -19,11 +19,11 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     author = serializers.SerializerMethodField()
     ingredients = IngredientInRecipeSerializer(
-        source='recipe_ingredients', many=True
+        source='recipe_ingredients', many=True, required=True
     )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    image = Base64ImageField()
+    image = Base64ImageField(required=True)
 
     class Meta:
         model = Recipe
@@ -38,6 +38,35 @@ class RecipeSerializer(serializers.ModelSerializer):
             'is_favorited',
             'is_in_shopping_cart',
         )
+
+    def validate_image(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "Поле image не может быть пустым"
+            )
+        return value
+
+    def validate_ingredients(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "Список ингредиентов не может быть пустым"
+            )
+        
+        # Проверка на повторяющиеся ингредиенты
+        ingredient_ids = [item['ingredient']['id'] for item in value]
+        if len(ingredient_ids) != len(set(ingredient_ids)):
+            raise serializers.ValidationError(
+                "Ингредиенты в рецепте не должны повторяться"
+            )
+        
+        return value
+
+    def validate(self, data):
+        if 'recipe_ingredients' not in data:
+            raise serializers.ValidationError({
+                'ingredients': 'Поле ingredients обязательно для заполнения'
+            })
+        return data
 
     def get_author(self, obj):
         from .users import UserSerializer
@@ -79,4 +108,22 @@ class RecipeSerializer(serializers.ModelSerializer):
         return self._check_existence(Favorite, recipe)
 
     def get_is_in_shopping_cart(self, recipe):
-        return self._check_existence(ShoppingCart, recipe) 
+        return self._check_existence(ShoppingCart, recipe)
+
+
+class RecipeShortLinkSerializer(serializers.ModelSerializer):
+    """Сериализатор для получения короткой ссылки на рецепт"""
+    
+    short_link = serializers.SerializerMethodField(method_name='get_short_link')
+
+    class Meta:
+        model = Recipe
+        fields = ('short_link',)
+
+    def get_short_link(self, obj):
+        request = self.context.get('request')
+        return request.build_absolute_uri(f'/recipes/{obj.id}/')
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return {'short-link': data['short_link']} 
