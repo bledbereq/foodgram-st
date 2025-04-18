@@ -12,6 +12,7 @@ class UserOfRecipeBase(models.Model):
     Attributes:
         user (ForeignKey): Пользователь, взаимодействующий с рецептом
         recipe (ForeignKey): Рецепт, с которым взаимодействует пользователь
+        created_at (DateTimeField): Дата создания записи
     """
 
     user = models.ForeignKey(
@@ -27,6 +28,11 @@ class UserOfRecipeBase(models.Model):
         verbose_name='Рецепт',
         related_name='%(class)ss',
         help_text='Рецепт, с которым взаимодействует пользователь'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата создания',
+        help_text='Дата и время добавления записи'
     )
 
     class Meta:
