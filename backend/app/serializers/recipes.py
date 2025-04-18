@@ -23,7 +23,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    image = Base64ImageField()
+    image = Base64ImageField(required=True)
 
     class Meta:
         model = Recipe
@@ -38,6 +38,13 @@ class RecipeSerializer(serializers.ModelSerializer):
             'is_favorited',
             'is_in_shopping_cart',
         )
+
+    def validate_image(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "Поле image не может быть пустым"
+            )
+        return value
 
     def validate_ingredients(self, value):
         if not value:
