@@ -17,8 +17,25 @@ SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", default="True").lower() == "true"
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backend']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1', 
+    'backend']
+    
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://backend',
+]
 
+# CORS settings
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://backend',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
