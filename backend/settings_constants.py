@@ -1,3 +1,0 @@
-USER_EMAIL_LEN = 254
-USER_CHAR_LEN = 150
-USER_REG = r"^[\w.@+-]+\Z"
