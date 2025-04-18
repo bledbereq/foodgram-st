@@ -12,6 +12,7 @@ class Subscription(models.Model):
     Attributes:
         user (ForeignKey): Пользователь, который подписывается
         author (ForeignKey): Автор рецептов, на которого подписываются
+        created_at (DateTimeField): Дата создания подписки
     """
 
     user = models.ForeignKey(
@@ -27,6 +28,11 @@ class Subscription(models.Model):
         related_name='authors',
         verbose_name='Автор рецептов',
         help_text='Автор рецептов, на которого подписываются'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата создания',
+        help_text='Дата и время создания подписки'
     )
 
     class Meta:
