@@ -157,7 +157,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         return '\n'.join(report_lines)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get'], url_path='get-link')
     def get_link(self, request, pk=None):
         """Получение короткой ссылки на рецепт"""
         recipe = self.get_object()
