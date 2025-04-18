@@ -57,26 +57,41 @@ class SubscribedUserSerializer(UserSerializer):
     на которых подписан текущий пользователь"""
 
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.ReadOnlyField(
-        source='author.recipes.count'
-    )
+    recipes_count = serializers.SerializerMethodField()
 
     class Meta(UserSerializer.Meta):
         fields = (
-            *UserSerializer.Meta.fields,
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'is_subscribed',
             'recipes',
             'recipes_count',
+            'avatar'
         )
 
     def get_recipes(self, author):
         from .recipes import ShortRecipeSerializer
-        return ShortRecipeSerializer(
-            author.recipes.all()[:int(self.context.get('request').GET.get(
-                'recipes_limit',
-                10**10
-            ))],
-            many=True
-        ).data
+        recipes_limit = int(self.context.get('request').GET.get('recipes_limit', 3))
+        recipes = author.recipes.all()[:recipes_limit]
+        return ShortRecipeSerializer(recipes, many=True).data
+
+    def get_recipes_count(self, author):
+        return author.recipes.count()
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Убедимся, что все обязательные поля присутствуют
+        required_fields = [
+            'id', 'username', 'first_name', 'last_name', 'email',
+            'is_subscribed', 'recipes', 'recipes_count', 'avatar'
+        ]
+        for field in required_fields:
+            if field not in data:
+                data[field] = None
+        return data
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
