@@ -27,7 +27,7 @@ class UserSerializer(DjoserUserSerializer):
     """Сериалайзер для получения пользователей с дополнительными полями"""
 
     is_subscribed = serializers.SerializerMethodField()
-    avatar = Base64ImageField(required=False)
+    avatar = Base64ImageField(required=True)
 
     class Meta(DjoserUserSerializer.Meta):
         model = User

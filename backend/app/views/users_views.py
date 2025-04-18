@@ -44,6 +44,10 @@ class UserViewSet(DjoserUserViewSet):
         """Метод для смены или удаления аватара пользователя"""
         user = request.user
         if request.method == 'PUT':
+            if 'avatar' not in request.data:
+                raise ValidationError(
+                    {'avatar': ['Это поле обязательно.']}
+                )
             serializer = self.get_serializer(
                 user, data=request.data,
                 partial=True
