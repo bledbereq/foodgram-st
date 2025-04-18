@@ -19,7 +19,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     author = serializers.SerializerMethodField()
     ingredients = IngredientInRecipeSerializer(
-        source='recipe_ingredients', many=True
+        source='recipe_ingredients', many=True, required=True
     )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -60,6 +60,13 @@ class RecipeSerializer(serializers.ModelSerializer):
             )
         
         return value
+
+    def validate(self, data):
+        if 'recipe_ingredients' not in data:
+            raise serializers.ValidationError({
+                'ingredients': 'Поле ingredients обязательно для заполнения'
+            })
+        return data
 
     def get_author(self, obj):
         from .users import UserSerializer
