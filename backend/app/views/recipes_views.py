@@ -62,13 +62,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_201_CREATED
             )
 
-        get_object_or_404(
-            model,
-            user=request.user,
-            recipe=recipe
-        ).delete()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            instance = model.objects.get(
+                user=request.user,
+                recipe=recipe
+            )
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except model.DoesNotExist:
+            raise ValidationError(
+                {'errors': 'Рецепт не найден в списке'},
+                code=status.HTTP_400_BAD_REQUEST
+            )
 
     @action(detail=True, methods=['post', 'delete'], url_path='favorite')
     def change_favorited_recipes(self, request, pk=None):
