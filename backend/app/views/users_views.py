@@ -88,10 +88,10 @@ class UserViewSet(DjoserUserViewSet):
                 raise ValidationError({'errors': 'Подписка уже была оформлена'})
 
             return Response(
-                SubscriptionSerializer(Subscription.objects.get(
-                    user=request.user,
-                    author=author
-                )).data,
+                SubscribedUserSerializer(
+                    author,
+                    context={'request': request}
+                ).data,
                 status=status.HTTP_201_CREATED
             )
 
