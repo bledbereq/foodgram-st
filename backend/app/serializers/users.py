@@ -1,8 +1,26 @@
 from djoser.serializers import UserSerializer as DjoserUserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
 from ..models import Subscription, User
+
+
+class UserCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания пользователя"""
+    
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password')
+        extra_kwargs = {
+            'first_name': {'required': True},
+            'last_name': {'required': True},
+            'password': {'write_only': True}
+        }
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
 
 
 class UserSerializer(DjoserUserSerializer):
@@ -12,14 +30,22 @@ class UserSerializer(DjoserUserSerializer):
     avatar = Base64ImageField(required=False)
 
     class Meta(DjoserUserSerializer.Meta):
+        model = User
         fields = (
-            *DjoserUserSerializer.Meta.fields,
-            'avatar',
-            'is_subscribed'
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'avatar'
         )
+        read_only_fields = ('id', 'username', 'email', 'first_name', 'last_name')
 
     def get_is_subscribed(self, user):
         request_user = self.context['request'].user
+        if not request_user.is_authenticated:
+            return False
         return Subscription.objects.filter(
             author=user.id,
             user=request_user.id
