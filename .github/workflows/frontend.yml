@@ -3,12 +3,8 @@ name: Frontend CI/CD
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'frontend/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'frontend/**'
 
 jobs:
   test:
@@ -31,8 +27,26 @@ jobs:
           cd frontend
           npm test
           
-  deploy:
+  docker-compose-test:
     needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+          
+      - name: Build and test with Docker Compose
+        run: |
+          cd infra
+          docker-compose up -d frontend
+          docker-compose ps
+          docker-compose logs frontend
+          
+  deploy:
+    needs: [test, docker-compose-test]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -52,4 +66,4 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/foodgram-frontend:latest 
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/foodgram-frontend:latest
