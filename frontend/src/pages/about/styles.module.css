@@ -55,6 +55,17 @@
   text-decoration: none;
 }
 
+.featuresList {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 15px 0;
+}
+
+.featuresList li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
 @media screen and (max-width: 950px) {
   .content {
     grid-template-columns: 1fr;
