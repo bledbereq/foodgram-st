@@ -12,41 +12,49 @@ const About = ({ updateOrders, orders }) => {
     </MetaTags>
     
     <Container>
-      <h1 className={styles.title}>Привет!</h1>
+      <h1 className={styles.title}>Заключительный проект от Яндекса Foodgram!</h1>
       <div className={styles.content}>
         <div>
-          <h2 className={styles.subtitle}>Что это за сайт?</h2>
+          <h2 className={styles.subtitle}>Что такое Foodgram?</h2>
           <div className={styles.text}>
             <p className={styles.textItem}>
-              Представляю вам проект, созданный во время обучения в Яндекс Практикуме. Этот проект — часть учебного курса, но он создан полностью самостоятельно.
+              Foodgram - проект для проверки нашей работы на Django.
+              Я не бекендер и вряд ли меня назовешь програмистом,
+              я просто чиловый парень, обожающий вайб кодинг.
+              Мечтаю уже закончить институт и не возращаться к It. 
+              Я выгорел и у меня не осталось нервов, поэтому я уже ко всему отношусь со смехом,
+              лучше пойду на завод на ямал нефть качать и попу морозить но лучше так чем так.
+              К проекту не относитесь серьезно) прошу
             </p>
             <p className={styles.textItem}>
-              Цель этого сайта — дать возможность пользователям создавать и хранить рецепты на онлайн-платформе. Кроме того, можно скачать список продуктов, необходимых для
-              приготовления блюда, просмотреть рецепты друзей и добавить любимые рецепты в список избранных.
+             Что было выполнено: 
             </p>
+            <ul className={styles.featuresList}>
+              <li>Создание и публикация собственных рецептов</li>
+              <li>Добавление рецептов в избранное</li>
+              <li>Формирование списка покупок для выбранных рецептов</li>
+              <li>Подписка на других пользователей и их рецепты</li>
+              <li>Удобный поиск рецептов по различным параметрам</li>
+            </ul>
             <p className={styles.textItem}>
-              Чтобы использовать все возможности сайта — нужна регистрация. Проверка адреса электронной почты не осуществляется, вы можете ввести любой email. 
-            </p>
-            <p className={styles.textItem}>
-              Заходите и делитесь своими любимыми рецептами!
+              Чтобы начать использовать все возможности Foodgram , просто зайтите на мой профиль гит, почитайте readme ну и там все понятно что как. если не понятно, то лучше не лезть, а то компьютер сломается
             </p>
           </div>
         </div>
         <aside>
           <h2 className={styles.additionalTitle}>
-            Ссылки
+            Контакты
           </h2>
           <div className={styles.text}>
             <p className={styles.textItem}>
-              Код проекта находится тут - <a href="#" className={styles.textLink}>Github</a>
+              Исходный код проекта: <a href="https://github.com/bledbereq/foodgram-st" className={styles.textLink} target="_blank" rel="noopener noreferrer">GitHub</a>
             </p>
             <p className={styles.textItem}>
-              Автор проекта: <a href="#" className={styles.textLink}>Имя Автора</a>
+              Автор проекта: <a href="https://t.me/bledbereq" className={styles.textLink} target="_blank" rel="noopener noreferrer">TG: @bledbereq</a>
             </p>
           </div>
         </aside>
       </div>
-      
     </Container>
   </Main>
 }
