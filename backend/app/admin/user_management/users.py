@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
 from app.models import User
 
 
@@ -9,10 +8,9 @@ from app.models import User
 class UserAdmin(BaseUserAdmin):
     """
     Административная панель для управления пользователями.
-    
     Наследуется от BaseUserAdmin Django для базовой функциональности.
-    Добавляет дополнительные поля и методы для отображения информации о пользователях.
-    
+    Добавляет дополнительные поля и методы
+    для отображения информации о пользователях.
     Attributes:
         list_display: Поля, отображаемые в списке пользователей
         search_fields: Поля, по которым можно осуществлять поиск
@@ -27,7 +25,9 @@ class UserAdmin(BaseUserAdmin):
     def get_avatar_display(self, obj):
         """Отображает аватар пользователя в виде миниатюры"""
         if obj.avatar:
-            return mark_safe(f'<img src="{obj.avatar.url}" width="50" height="50" />')
+            return mark_safe(
+                f'<img src="{obj.avatar.url}" width="50" height="50" />'
+            )
         return 'Нет аватара'
     get_avatar_display.short_description = 'Аватар'
 
@@ -59,4 +59,4 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ('username', 'email', 'first_name', 'last_name')
     list_filter = ('is_staff', 'is_active', 'date_joined')
     ordering = ('id',)
-    readonly_fields = ('date_joined', 'last_login') 
+    readonly_fields = ('date_joined', 'last_login')

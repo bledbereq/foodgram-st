@@ -7,14 +7,13 @@ from .ingredient import Ingredient
 class Recipe(models.Model):
     """
     Модель рецептов кулинарных блюд.
-    
     Содержит основную информацию о рецепте, включая название, описание,
     список ингредиентов, изображение, автора и время приготовления.
-    
     Attributes:
         name (CharField): Название рецепта
         text (TextField): Подробное описание процесса приготовления
-        ingredients (ManyToManyField): Связь с ингредиентами через промежуточную модель
+        ingredients (ManyToManyField):
+        Связь с ингредиентами через промежуточную модель
         image (ImageField): Изображение готового блюда
         author (ForeignKey): Создатель рецепта
         cooking_time (IntegerField): Время приготовления в минутах
@@ -81,9 +80,7 @@ class Recipe(models.Model):
 class IngredientInRecipe(models.Model):
     """
     Промежуточная модель для связи рецептов с ингредиентами.
-    
     Содержит информацию о количестве каждого ингредиента в рецепте.
-    
     Attributes:
         recipe (ForeignKey): Связанный рецепт
         ingredient (ForeignKey): Используемый ингредиент

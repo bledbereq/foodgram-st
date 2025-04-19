@@ -4,8 +4,9 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     """Создание профиля пользователя при регистрации"""
     if created:
-        pass 
+        pass

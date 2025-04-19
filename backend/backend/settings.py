@@ -19,9 +19,9 @@ DEBUG = os.getenv("DEBUG", default="True").lower() == "true"
 
 ALLOWED_HOSTS = [
     'localhost',
-    '127.0.0.1', 
+    '127.0.0.1',
     'backend']
-    
+
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost',
     'http://127.0.0.1',
@@ -94,11 +94,7 @@ DATABASES = {
     }
 }
 
-
-
-# Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

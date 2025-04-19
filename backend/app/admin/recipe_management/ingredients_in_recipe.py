@@ -7,4 +7,4 @@ class IngredientInRecipeAdmin(admin.ModelAdmin):
     """Админка для промежуточной модели ингредиентов в рецепте"""
 
     list_display = ('recipe', 'ingredient', 'amount')
-    search_fields = ('recipe__name', 'ingredient__name') 
+    search_fields = ('recipe__name', 'ingredient__name')
