@@ -2,9 +2,6 @@
 
 2. Ставьте в файл ```.env```
 
-    a. Настройки СУБД PostgreSQL:
-
-    file name: ```.env```
     ```
     POSTGRES_USER=admin
     POSTGRES_PASSWORD=password
@@ -14,11 +11,21 @@
     DB_PORT=5432
     ```
 
-**Вы можете ставить свои значения, но не забудте поменять ```docker-compose``` файл для СУБД*
+3. После этого перейдите в директорию ```/infra``` и запустите ```docker-compose``` файл bash-командой 
+    ```
+    docker compose up
+    ```
+4. Перейдите ```http://localhost/```
+___
+
+
+Для работы напанели админа, нам необходимо также перейти в дерикторию ```/infra```, где уже запущен ```docker-compose``` файл.
+Выполните bash-команду:
+```
+docker-compose exec backend python manage.py createsuperuser
+```
+После того как заполните все поля, можете перейти в ```http://localhost/admin``` и зайти с помощью ранее зарегестрированного суперпользователя
 
 ---
-
-3. После этого перейдите в директорию ```/infra``` и запустите ```docker-compose``` файл bash-командой 
-```
-docker compose up
-```
+О работе:
+- Все postman-тесты успешно пройдены

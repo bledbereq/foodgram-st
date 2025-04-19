@@ -6,10 +6,6 @@ export default [
     href: '/recipes',
     auth: false
   }, {
-    title: 'О проекте',
-    href: '/about',
-    auth: false
-  }, {
     title: 'Создать рецепт',
     href: '/recipes/create',
     auth: true
