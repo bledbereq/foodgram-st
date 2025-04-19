@@ -18,10 +18,8 @@ class Command(BaseCommand):
             return
 
         with open(file_path, "r", encoding="utf-8") as file:
-            message = (
-                f"Загружено продуктов: {len(Ingredient.objects.bulk_create(
-                    Ingredient(**item) for item in json.load(file)
-                ))}"
-            )
+            ingredients = [Ingredient(**item) for item in json.load(file)]
+            created_count = len(Ingredient.objects.bulk_create(ingredients))
+            message = f"Загружено продуктов: {created_count}"
 
         self.stdout.write(self.style.SUCCESS(message))
