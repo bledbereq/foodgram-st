@@ -1,17 +1,23 @@
 from djoser.serializers import UserSerializer as DjoserUserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model  # noqa: F401
 
 from ..models import Subscription, User
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
     """Сериализатор для создания пользователя"""
-    
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password')
+        fields = (
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'password',
+        )
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True},
@@ -38,9 +44,15 @@ class UserSerializer(DjoserUserSerializer):
             'first_name',
             'last_name',
             'is_subscribed',
-            'avatar'
+            'avatar',
         )
-        read_only_fields = ('id', 'username', 'email', 'first_name', 'last_name')
+        read_only_fields = (
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+        )
 
     def get_is_subscribed(self, user):
         request_user = self.context['request'].user
@@ -74,7 +86,8 @@ class SubscribedUserSerializer(UserSerializer):
 
     def get_recipes(self, author):
         from .recipes import ShortRecipeSerializer
-        recipes_limit = int(self.context.get('request').GET.get('recipes_limit', 3))
+        recipes_limit = int(self.context.get('request')
+                            .GET.get('recipes_limit', 3))
         recipes = author.recipes.all()[:recipes_limit]
         return ShortRecipeSerializer(recipes, many=True).data
 
@@ -101,4 +114,4 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = ('user', 'author') 
+        fields = ('user', 'author')

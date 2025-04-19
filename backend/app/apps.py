@@ -7,5 +7,5 @@ class AppConfig(AppConfig):
     verbose_name = 'App'
 
     def ready(self):
-        import app.models.signals  
-        import app.admin 
+        import app.models.signals  # noqa: F401
+        import app.admin  # noqa: F401

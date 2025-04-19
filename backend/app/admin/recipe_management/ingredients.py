@@ -6,10 +6,8 @@ from app.models import Ingredient
 class IngredientAdmin(admin.ModelAdmin):
     """
     Административная панель для управления ингредиентами.
-    
     Предоставляет интерфейс для управления списком ингредиентов,
     используемых в рецептах.
-    
     Attributes:
         list_display: Поля, отображаемые в списке ингредиентов
         list_filter: Поля для фильтрации ингредиентов
@@ -25,12 +23,10 @@ class IngredientAdmin(admin.ModelAdmin):
     def get_recipe_count(self, obj):
         """
         Подсчитывает количество рецептов, использующих данный ингредиент.
-        
         Args:
             obj: Объект ингредиента
-            
         Returns:
             Количество рецептов с данным ингредиентом
         """
         return obj.recipe_ingredients.count()
-    get_recipe_count.short_description = 'Используется в рецептах' 
+    get_recipe_count.short_description = 'Используется в рецептах'

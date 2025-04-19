@@ -2,7 +2,10 @@ from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly
+)
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, NotAuthenticated
 
@@ -10,9 +13,9 @@ from ..models import Subscription, User
 from ..core.pagination import PagesPagination
 from ..serializers import (
     UserSerializer,
-    SubscriptionSerializer,
     SubscribedUserSerializer,
 )
+
 
 class UserViewSet(DjoserUserViewSet):
     """ViewSet, описывающий работу с пользователями и подписками"""
@@ -85,7 +88,9 @@ class UserViewSet(DjoserUserViewSet):
             )
 
             if not created:
-                raise ValidationError({'errors': 'Подписка уже была оформлена'})
+                raise ValidationError(
+                    {'errors': 'Подписка уже была оформлена'}
+                )
 
             return Response(
                 SubscribedUserSerializer(
@@ -133,4 +138,4 @@ class UserViewSet(DjoserUserViewSet):
             many=True,
             context={'request': request}
         )
-        return paginator.get_paginated_response(serializer.data) 
+        return paginator.get_paginated_response(serializer.data)

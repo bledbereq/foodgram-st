@@ -51,14 +51,13 @@ class RecipeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Список ингредиентов не может быть пустым"
             )
-        
         # Проверка на повторяющиеся ингредиенты
         ingredient_ids = [item['ingredient']['id'] for item in value]
         if len(ingredient_ids) != len(set(ingredient_ids)):
             raise serializers.ValidationError(
                 "Ингредиенты в рецепте не должны повторяться"
             )
-        
+
         return value
 
     def validate(self, data):
@@ -113,8 +112,9 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class RecipeShortLinkSerializer(serializers.ModelSerializer):
     """Сериализатор для получения короткой ссылки на рецепт"""
-    
-    short_link = serializers.SerializerMethodField(method_name='get_short_link')
+
+    short_link = serializers.SerializerMethodField(
+        method_name='get_short_link')
 
     class Meta:
         model = Recipe
@@ -126,4 +126,4 @@ class RecipeShortLinkSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        return {'short-link': data['short_link']} 
+        return {'short-link': data['short_link']}

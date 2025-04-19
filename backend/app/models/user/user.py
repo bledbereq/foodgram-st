@@ -6,10 +6,9 @@ from django.db import models
 class User(AbstractUser):
     """
     Модель пользователей системы.
-    
-    Наследуется от AbstractUser Django для базовой функциональности аутентификации.
+    Наследуется от AbstractUser Django для базовой
+    функциональности аутентификации.
     Использует email в качестве основного идентификатора пользователя.
-    
     Attributes:
         email (EmailField): Уникальный email пользователя
         username (CharField): Уникальное имя пользователя с валидацией символов

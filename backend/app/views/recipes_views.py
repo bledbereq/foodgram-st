@@ -48,11 +48,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def _toggle_favorite_or_shopping_cart(request, recipe, model):
-        """Метод для создания и удаления рецептов в списке избранных или в корзине покупок"""
+        """Метод для создания и удаления рецептов
+          в списке избранных или в корзине покупок"""
         if request.method == 'POST':
             _, created = model.objects.get_or_create(
                 user=request.user,
-                recipe=recipe
+                recipe=recipe,
             )
             if not created:
                 raise ValidationError({'errors': 'Рецепт уже добавлен'})
@@ -73,7 +74,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             raise ValidationError(
                 {'errors': 'Рецепт не найден в списке'},
                 code=status.HTTP_400_BAD_REQUEST
-            )
+            ) from None
 
     @action(detail=True, methods=['post', 'delete'], url_path='favorite')
     def change_favorited_recipes(self, request, pk=None):
@@ -107,8 +108,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredient_totals = {}
         recipe_names = {}
 
-        for item in (request.user.shoppingcarts.all()
-                .select_related('recipe')):
+        for item in (request.user.
+                     shoppingcarts.all().select_related('recipe')):
             recipe_names[item.recipe.name] = item.recipe.author.username
             for ingredient_in_recipe in item.recipe.recipe_ingredients.all():
                 key = (
@@ -165,4 +166,4 @@ class RecipeViewSet(viewsets.ModelViewSet):
             recipe,
             context={'request': request}
         )
-        return Response(serializer.data, status=status.HTTP_200_OK) 
+        return Response(serializer.data, status=status.HTTP_200_OK)

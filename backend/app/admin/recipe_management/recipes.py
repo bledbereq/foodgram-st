@@ -7,10 +7,8 @@ from app.models import Recipe
 class RecipeAdmin(admin.ModelAdmin):
     """
     Административная панель для управления рецептами.
-    
     Предоставляет интерфейс для управления рецептами, включая отображение
     ингредиентов, изображений и статистики.
-    
     Attributes:
         list_display: Поля, отображаемые в списке рецептов
         search_fields: Поля, по которым можно осуществлять поиск
@@ -21,42 +19,39 @@ class RecipeAdmin(admin.ModelAdmin):
     def get_ingredients_display(self, obj):
         """
         Отображает список ингредиентов рецепта с их количеством.
-        
         Args:
             obj: Объект рецепта
-            
         Returns:
             HTML-строка с форматированным списком ингредиентов
         """
-        ingredients = obj.recipe_ingredients.all()
         return mark_safe('<br>'.join([
-            f'{ing.ingredient.name} - {ing.amount} {ing.ingredient.measurement_unit}'
-            for ing in ingredients
+            f'{ing.ingredient.name} - {ing.amount} '
+            f'{ing.ingredient.measurement_unit}'
+            for ing in obj.ingredients_in_recipe.all()
         ]))
     get_ingredients_display.short_description = 'Продукты'
 
     def get_image_display(self, obj):
         """
         Отображает изображение рецепта в виде миниатюры.
-        
         Args:
             obj: Объект рецепта
-            
         Returns:
             HTML-тег img или текст, если изображение отсутствует
         """
         if obj.image:
-            return mark_safe(f'<img src="{obj.image.url}" width="50" height="50" />')
+            return mark_safe(
+                f'<img src="{obj.image.url}" '
+                'width="50" height="50" />'
+            )
         return 'Нет изображения'
     get_image_display.short_description = 'Картинка'
 
     def get_favorites_count(self, obj):
         """
         Подсчитывает количество пользователей, добавивших рецепт в избранное.
-        
         Args:
             obj: Объект рецепта
-            
         Returns:
             Количество пользователей, добавивших рецепт в избранное
         """
@@ -77,4 +72,4 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('author', 'created_at', 'cooking_time')
     ordering = ('-created_at',)
     readonly_fields = ('created_at',)
-    filter_horizontal = ('ingredients',) 
+    filter_horizontal = ('ingredients',)
